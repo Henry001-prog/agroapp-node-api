@@ -7,7 +7,7 @@ interface IProduct {
     unit: string;
     registeredBy: string;
     createdAt: any;
-  }
+}
 
 const ProductSchema = new Schema<IProduct>({
     product: {

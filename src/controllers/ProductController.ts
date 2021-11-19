@@ -1,37 +1,68 @@
 import { model, PaginateResult, UpdateQuery } from 'mongoose';
+import { Request, Response, NextFunction } from 'express';
 
 const Product = model('IProduct');
 
 const ProductController = {
-    async index(req: { query: { page?: 1 } }, res: { json: (arg0: PaginateResult<any>) => any; }) {
-        const { page = 1 } = req.query;
-        const products = await Product.paginate({}, { page, limit: 10 });
+    async index(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { page = 1 }: any = req.query;
+            const products = await Product.paginate({}, { page, limit: 10 });
 
-        return res.json(products);
+            res.json(products);
+
+        } catch (error) {
+            res.status(500).json({Error: 'Não foi possível trazer os registros solicitados!'});
+            next();
+        }
     },
 
-    async show(req: { params: { id: string } }, res: { json: (arg0: any) => any; }): Promise<void> {
-        const product = await Product.findById(req.params.id);
+    async show(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const product = await Product.findById(req.params.id);
 
-        return res.json(product);
+            res.json(product);
+
+        } catch (error) {
+            res.status(500).json({Error: 'Não foi possível trazer o registro específico solicitado!'});
+            next();
+        }
     },
 
-    async store(req: { body: string }, res: { json: (arg0: any) => any; }): Promise<void> {
-        const product = await Product.create(req.body);
+    async store(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const product = await Product.create(req.body);
 
-        return res.json(product);
+            res.json(product);
+
+        } catch (error) {
+            res.status(500).json({Error: 'Não foi possível criar o registro na base de dados!'});
+            next();
+        }
     },
 
-    async update(req: { params: { id: string }; body: UpdateQuery<any> }, res: { json: (arg0: any) => any; }): Promise<void> {
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        return res.json(product);
+            res.json(product);
+
+        } catch (error) {
+            res.status(500).json({Error: 'Não foi possível atualizar o registro na base de dados!'});
+            next();
+        }
     },
 
-    async destroy(req: { params: { id: string } }, res: { send: () => any; }): Promise<void> {
-        await Product.findByIdAndRemove(req.params.id);
+    async destroy(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            await Product.findByIdAndRemove(req.params.id);
 
-        return res.send();
+            res.json({Success: 'Registro deletado com sucesso!'});
+
+        } catch (error) {
+            res.status(500).json({Error: 'Não foi possível deletar o registro solicitado!'});
+            next();
+        }
     }
 };
 

@@ -11,7 +11,7 @@ runDB();
 
 async function runDB(): Promise<void> {
     await connect(
-        'mongodb://localhost:27017/nodeapi',
+        'mongodb://localhost:27017/ruralproducts',
         { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions
     );
 }
